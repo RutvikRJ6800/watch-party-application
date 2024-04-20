@@ -1,0 +1,44 @@
+body {
+    font-family: Arial, sans-serif;
+}
+
+#video-container {
+    margin-bottom: 20px;
+}
+
+#player {
+    width: 640px;
+    height: 360px;
+    margin-bottom: 10px;
+}
+
+#controls button {
+    margin-right: 10px;
+}
+
+#chat-container {
+    width: 640px;
+}
+
+#messages {
+    list-style-type: none;
+    padding: 0;
+}
+
+#messages li {
+    margin-bottom: 5px;
+}
+
+#messages li span {
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+#chat-form input[type="text"] {
+    width: 80%;
+    margin-right: 10px;
+}
+
+#chat-form button {
+    width: 18%;
+}

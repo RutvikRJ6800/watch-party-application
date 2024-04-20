@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room {{ room_id }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <h1>Welcome to Room {{ room_id }}</h1>
+    <div id="video-container">
+        <div id="player"></div>
+        <div id="controls">
+            <button id="play-pause-btn">Play/Pause</button>
+            <input type="range" id="seek-bar" value="0">
+            <button id="sync-btn">Sync</button>
+        </div>
+    </div>
+    <div id="chat-container">
+        <ul id="messages"></ul>
+        <form id="chat-form">
+            <input type="text" id="message-input" placeholder="Type your message...">
+            <button type="submit">Send</button>
+        </form>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.3.1/socket.io.js" integrity="sha384-fHzUZS/n2LEvOGImMSuSiA1L/2NK8kyUwOPxL7ZGUWwOXDvl2lXTUn3a7JjMCmY8" crossorigin="anonymous"></script>
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script src="{{ url_for('static', filename='room.js') }}"></script>
+</body>
+</html>
+s
