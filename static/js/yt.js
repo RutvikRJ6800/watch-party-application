@@ -123,7 +123,7 @@ socket.on('get playlist videos', function(data) {
             part: 'snippet,contentDetails',
             playlistId: playlistId,
             maxResults: '50',
-            key: data.api_key
+            key: AIzaSyCcundnMWXXlz9ELzX1bgaUbAIIIcpLUUk
         },
         function(data) {
           for (let video of data.items) {

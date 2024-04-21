@@ -102,12 +102,13 @@ def handle_new_room(roomnum):
     updateQueueVideos(roomnum)
 
     currVideo = rooms[room_name]['currVideo']['yt']
+
     emit('changeVideoClient', {'videoId': currVideo}, room=room_name)
 
     if request.sid != host:
         socketio.sleep(1)
         # emit('getData', room=host)
-        emit('getData', room=host, broadcast=True)
+        emit('syncHost', room=roomnum, broadcast=True)
         rooms[room_name]['users'].append(sidToUsername[request.sid])
 
     updateRoomUsers(roomnum)
@@ -217,9 +218,10 @@ def handle_sync_host(data):
     if room_num:
         host = rooms.get("room-" + str(room_num), {}).get('host')
         if request.sid != host:
+            print("sync host called by is not host")
             socketio.emit('getData', room=host)
         else:
-            socketio.emit('syncHost', room=request.sid)
+            socketio.emit('syncHost', room_num, room=request.sid)
 
 @socketio.on('player status')
 def handle_player_status(data):

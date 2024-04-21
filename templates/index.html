@@ -1,63 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-121783460-1"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-
-        gtag('config', 'UA-121783460-1');
-    </script>
-
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <meta name="description" content="">
-    <meta name="author" content="">
-
-    <title>DS Project </title>
-
-    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/static/css/animate.css" rel="stylesheet">
-
-    <script src="https://code.jquery.com/jquery-latest.min.js"></script>
-    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
-
-    <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
-
-    <link href="/static/css/small-business.css" rel="stylesheet">
-
-    <link href="/static/css/style.css" rel="stylesheet">
+    <head>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=UA-121783460-1"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
     
-</head>
-
+            function gtag() {
+                dataLayer.push(arguments);
+            }
+            gtag('js', new Date());
+    
+            gtag('config', 'UA-121783460-1');
+        </script>
+    
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="">
+    
+        <title>DS Project </title>
+    
+        <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/static/css/animate.css" rel="stylesheet">
+    
+        <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+        <script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+    
+        <script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+    
+        <link href="/static/css/small-business.css" rel="stylesheet">
+    
+        <link href="/static/css/style.css" rel="stylesheet">
+        
+    </head>
 <body class="bg-light" id="Home">
-   
+
+    <div class="header">
+        <h1>Youtube Watch Party</h1>
+    </div>
+
     <div class="container">
         <div id="loading"></div>
+        
         <div id="userFormArea" class="row">
             <div class="col-md-12">
-                <h2>YouTube Watch Party</h2>
+
                 <hr style="height:20pt; visibility:hidden;" />
 
                 <h2> Create / Join Room </h2>
-                <form id="userForm">
+                <form id="userForm" class="regForm">
                     <div class="form-group">
                         <p style="color:red; margin-bottom: 0px" id="missinginfo"></p>
                         <label>Enter Name</label>
-                        <input class="form-control" id="username" />
+                        <input class="form-control" id="username" required="true" />
                         <br />
                         <p style="color:red; margin-bottom: 0px" id="missinginfo2"></p>
                         <label>Enter Room ID</label>
-                        <br/>
-                        <input class="form-control" id="roomnum", value="{{ room }}" />
-                        <br/>
+                        <br />
+                        <input class="form-control" id="roomnum" required="true" />
+                        <br />
 
-                        <input style="margin-top: 10px;" type="submit" class="btn btn-danger" value="Enter" />
+                        <input style="margin-top: 10px;" type="submit" class="btn btn-primary" value="Enter" />
                         <hr style="height:65pt; visibility:hidden;" />
                     </div>
                 </form>
@@ -65,57 +68,71 @@
         </div>
 
         <div id="roomArea">
-            <h5 class="chat-room" style="color:rgb(94, 221, 20);">Chatroom</h5>
+            
             <div class="row my-4" style="margin-top: 0px !important;">
-                
-                <div class="col-lg-7">
 
-                    
+                <div class="col-lg-10">
+
+
                     <div id='playerArea'>
                         <div class="video" id="player"></div>
                     </div>
-                    <div id='dailyArea'>
-                        <div class="video" id="player-daily"></div>
-                    </div>
-                    
+
+
 
                     <div>
-                        <button id="playButton" onclick="playVideo(roomnum)" style="margin-top:.5rem" class="btn btn-danger"><i class=""></i> Play / <i class=""></i> Pause</button>
-                        <button id="syncbutton" onclick="syncVideo(roomnum);syncAlert()" style="margin-top:.5rem" class="btn btn-danger"><i class=""></i> Sync</button>
-                        <button id="new-invite-button" style="margin-top:.5rem" class="btn btn-danger" data-toggle="modal" data-target="#inviteModal">invite</button>
-                   </div>
+                        <button id="playButton" onclick="playVideo(roomnum)" style="margin-top:.5rem"
+                            class="btn btn-primary"><i class=""></i> Play / <i class=""></i> Pause</button>
+                        <button id="syncbutton" onclick="syncVideo(roomnum);syncAlert()" style="margin-top:.5rem"
+                            class="btn btn-primary"><i class=""></i> Sync</button>
+                        <button id="new-invite-button" style="margin-top:.5rem" class="btn btn-primary"
+                            data-toggle="modal" data-target="#inviteModal">invite</button>
+                    </div>
 
                     <div id='persoff'></div>
-
+                </br>
                     <div class="topbotmargins">
-                        <input type="Video" style="max-width: 200px; margin-right: .5rem; margin-bottom: .5rem; float: left;" class="form-control" id="inputVideoId" placeholder="Video ID / URL">
+                        <input type="Video"
+                            style="width: 400px; margin-right: .5rem; margin-bottom: .5rem; float: left;"
+                            class="form-control" id="inputVideoId" placeholder="Video ID / URL">
                     </div>
+
                     <div>
-                        <button id="changeButton" onclick="changeVideoParse(roomnum)" class="btn btn-danger"><i class=""></i> Change Video</button>
+                        <button id="changeButton" onclick="changeVideoParse(roomnum)" class="btn btn-primary"><i
+                                class=""></i> Change Video</button>
                     </div>
+                    
                     <div id="visual-queue" class="vid-list-container">
                         <ul class="vid-list" id="vidlist">
                             <li class="vid-item">
-                                
+
                             </li>
                         </ul>
                     </div>
-                   
-                    <p style="display: none" id="beta-message" class="lead">Queue is currently only supported by YouTube</p>
+
+                    <p style="display: none" id="beta-message" class="lead">Queue is currently only supported by YouTube
+                    </p>
+                    
                     <div class="users">
                         <h5 class="right-header">Online Users</h5>
-                        <div class="well online-users noscrollbar">
+                        <div class="well online-users noscrollbar1">
                             <ul class="list-group" id="users"></ul>
                         </div>
                     </div>
-                   
+
 
                 </div>
-                <div class="col-lg-5">
+                
+                <div class="col-lg-2" style="padding: none;" >
+                    <h3 class="chat-room" style="color:rgb(21, 12, 190); " >Chat</h3>
                     <hr style="height:0pt; visibility:hidden;" />
 
                     <div class="col-md-13">
-                        <button style="background-color: #ff3c00" type="button" class="nonmobile-hide btn btn-info btn-sm invite-button" data-toggle="modal" data-target="#inviteModal"><br><h5>invite</h5></button>
+                        <button style="background-color: #ff3c00" type="button"
+                            class="nonmobile-hide btn btn-info btn-sm invite-button" data-toggle="modal"
+                            data-target="#inviteModal"><br>
+                            <h5>invite</h5>
+                        </button>
                     </div>
                     <hr style="height:0pt; visibility:hidden;" />
                     <div id="inviteModal" class="modal fade" role="dialog">
@@ -127,12 +144,15 @@
                                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                                 </div>
                                 <div class="modal-body">
-                                    
-                                    <input class="inv_input" id="inv_input" type="text" value="" class="field left" readonly>
+
+                                    <input class="inv_input" id="inv_input" type="text" value="" class="field left"
+                                        readonly>
                                 </div>
                                 <div class="modal-footer">
                                     <div style="opacity: 1" class="tooltip">
-                                        <button type="button" class="btn btn-default" onclick="copyInvite()" onmouseout="outFunc()"><span class="tooltiptext" id="myTooltip">Copy</span><i class="fas fa-clipboard"></i> Copy</button>
+                                        <button type="button" class="btn btn-default" onclick="copyInvite()"
+                                            onmouseout="outFunc()"><span class="tooltiptext"
+                                                id="myTooltip">Copy</span><i class="fas fa-clipboard"></i> Copy</button>
                                     </div>
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                                 </div>
@@ -142,13 +162,26 @@
                     </div>
 
                     <div id="messageArea" class="row message-area">
-                        <br/>
-                        <div class="col-md-12">
+                        
+                        <br />
+                        <div class="col-md-13">
+                            
                             <div class="chat noscrollbar" id="chat"></div>
                             <form id="messageForm">
                                 <div class="form-group">
-                                    <br/>
-                                    <input class="form-control chat-form" id="message" placeholder="Type Message..." />
+                                    <br />
+
+                                    <div class="form-group" id="messageForm">
+                                        <div class="input-container">
+                                            <input class="form-control chat-form" id="message"
+                                                placeholder="Type Message..." />
+                                            <button type="submit" id="send_msg_btn"><img src="../static/img/sennd_img.png"
+                                                    class="send-icon" alt="" id="sendButton" /></button>
+                                        </div>
+                                    </div>
+
+
+
                                     <br />
                                     <br />
                                 </div>
@@ -157,119 +190,132 @@
                     </div>
                 </div>
             </div>
-
-   
-
-    <script>
-        var socket = io.connect();
-        var roomnum = 1
-        var id = "M7lc1UVf-VE"
-        var username = ""
-        var nosymbols = new RegExp("^(([a-zA-Z0-9_-][a-zA-Z0-9 _-]*[a-zA-Z0-9_-])|([a-zA-Z0-9_-]*))$");
-
-        $(function() {
-            var $messageForm = $('#messageForm');
-            var $message = $('#message');
-            var $chat = $('#chat');
-            var $roomArea = $('#roomArea');
-            var $userFormArea = $('#userFormArea');
-            var $userForm = $('#userForm');
-            var $users = $('#users');
-            var $username = $('#username');
-            var $roomnum = $('#roomnum');
-
-            var $vidlist = $('#vidlist');
-
-           
+        </div>
 
 
-            $messageForm.submit(function(e) {
-                e.preventDefault();
-              
-                socket.emit('send message', $message.val());
-                $message.val('');
-            });
 
-            socket.on('new message', function(data) {
-                var last_div = $('.chat > div:last')[0]
 
-               
-                if (last_div !== undefined) {
-                    var myRegex = /.*<strong>(.+)<\/strong>.*/g
-                    var match = myRegex.exec(last_div.innerHTML)
-                    console.log(last_div.innerHTML)
-                    var last_user = ""
-                    if (match != null) {
-                        console.log("found the user!" + match[1])
-                        last_user = match[1]
-                    }
-                }
-                if (data.user != last_user) {
-                    $chat.append('<div class="well well-sm message-well"><strong>' + data.user + '</strong>: ' + data.msg + '</div>');
-                }
-               
-                else {
-                    last_div.innerHTML = last_div.innerHTML + " <br> " + data.msg
-                }
-                
-                $('div#chat').scrollTop($('div#chat')[0].scrollHeight)
-            });
 
-           
-            $userForm.submit(function(e) {
-                e.preventDefault();
-               
-                if ($username.val() == "") {
-                    console.log("ENTER A NAME")
-                    var noname = document.getElementById('missinginfo')
-                    noname.innerHTML = "Surely you have a name right? Enter it below!"
-                }
-                
-                else if ($username.val().length > 30) {
-                    console.log("NAME IS TOO LONG")
-                    var noname = document.getElementById('missinginfo')
-                    noname.innerHTML = "Your name can't possibly be over 30 characters!"
-                }
-                
-                else if ($roomnum.val().length > 50) {
-                    console.log("ROOM NAME IS TOO LONG")
-                    var noname = document.getElementById('missinginfo')
-                    noname.innerHTML = "How are you going to remember a room code that has more than 50 characters?"
-                }
-               
-                else if (!nosymbols.test($roomnum.val())) {
-                    console.log("ENTER A PROPER ROOMNUMBER")
-                    var noname = document.getElementById('missinginfo')
-                    noname.innerHTML = ""
-                    var noname2 = document.getElementById('missinginfo2')
-                    noname2.innerHTML = "Please enter a room ID without symbols or leading/trailing whitespace!"
-                } else {
-                    username = $username.val()
-                    console.log("before emit")
-                    console.log($username.val())
-                    socket.emit('new user', $username.val(), function(data) {
-                        console.log("before emit1")
-                        console.log(data)
-                        if (data) {
+            <script>
+                var socket = io.connect();
+                var roomnum = 1
+                var id = "M7lc1UVf-VE"
+                var username = ""
+                var nosymbols = new RegExp("^(([a-zA-Z0-9_-][a-zA-Z0-9 -]*[a-zA-Z0-9-])|([a-zA-Z0-9_-]*))$");
 
-                            console.log("trying to hide")
-                        
-                            $userFormArea.hide();
-                            console.log("trying to show")
-                            $roomArea.show();
-                           
-                            
-                            if ($roomnum.val() != "") {
-                                roomnum = $roomnum.val()
-                            }
-   
-                            document.getElementById("inv_input").value = "localhost:5000/" + roomnum
-                          
-                        }
-                        
+                $(function () {
+                    var $messageForm = $('#messageForm');
+                    var $message = $('#message');
+                    var $chat = $('#chat');
+                    var $roomArea = $('#roomArea');
+                    var $userFormArea = $('#userFormArea');
+                    var $userForm = $('#userForm');
+                    var $users = $('#users');
+                    var $username = $('#username');
+                    var $roomnum = $('#roomnum');
+
+                    var $vidlist = $('#vidlist');
+
+                    var user_list = {};
+                    var last_user = "";
+
+                    $messageForm.submit(function (e) {
+                        e.preventDefault();
+                        console.log("SEnd MessGe");
+                        if ($message.val() == "") return;
+                        socket.emit('send message', $message.val());
+                        $message.val('');
                     });
 
-                    socket.on("user added", function(data) {
+                    function onsendClick() {
+                        e.preventDefault();
+                        console.log("SEnd MessGe");
+                        socket.emit('send message', $message.val());
+                        $message.val('');
+                    }
+
+                    socket.on('new message', function (data) {
+                        var last_div = $('.chat > div:last')[0]
+
+                        // if (last_div !== undefined) {
+                        //     var myRegex = /.<strong>(.+)<\/strong>./g
+                        //     var match = myRegex.exec(last_div.innerHTML)
+                        //     console.log(last_div.innerHTML)
+                        //     var last_user = ""
+                        //     if (match != null) {
+                        //         console.log("found the user!" + match[1])
+                        //         last_user = match[1]
+                        //     }
+                        // }
+                        console.log("LAst User ", last_user)
+                        if (data.user != last_user) {
+                            if (!(data.user in user_list)) {
+                                var randomNumber = Math.floor(Math.random() * 10);
+                                user_list[data.user] = randomNumber;
+                            }
+                            addMessage(data, user_list[data.user]);
+                            last_user = data.user;
+                            // $chat.append('<div class="well well-sm message-well"><strong>' + data.user + '</strong>: ' + data.msg + '</div>');
+                        }
+
+                        else {
+                            appendMessageToChat(data);
+                            // last_div.innerHTML = last_div.innerHTML + "</br>"+data.msg
+                        }
+
+                        $('div#chat').scrollTop($('div#chat')[0].scrollHeight)
+                    });
+
+
+                    $userForm.submit(function (e) {
+                        e.preventDefault();
+
+                        if ($username.val() == "") {
+                            console.log("ENTER A NAME")
+                            var noname = document.getElementById('missinginfo')
+                            noname.innerHTML = "Surely you have a name right? Enter it below!"
+                        }
+
+                        else if ($username.val().length > 30) {
+                            console.log("NAME IS TOO LONG")
+                            var noname = document.getElementById('missinginfo')
+                            noname.innerHTML = "Your name can't possibly be over 30 characters!"
+                        }
+
+                        else if ($roomnum.val().length > 50) {
+                            console.log("ROOM NAME IS TOO LONG")
+                            var noname = document.getElementById('missinginfo')
+                            noname.innerHTML = "How are you going to remember a room code that has more than 50 characters?"
+                        }
+
+                        else if (!nosymbols.test($roomnum.val())) {
+                            console.log("ENTER A PROPER ROOMNUMBER")
+                            var noname = document.getElementById('missinginfo')
+                            noname.innerHTML = ""
+                            var noname2 = document.getElementById('missinginfo2')
+                            noname2.innerHTML = "Please enter a room ID without symbols or leading/trailing whitespace!"
+                        } else {
+                            username = $username.val()
+
+                            socket.emit('new user', $username.val(), function (data) {
+                                if (data) {
+
+                                    $userFormArea.hide();
+
+                                    $roomArea.show();
+
+
+                                    if ($roomnum.val() != "") {
+                                        roomnum = $roomnum.val()
+                                    }
+
+                                    document.getElementById("inv_input").value = "localhost:3008/" + roomnum
+
+                                }
+
+                            });
+
+                            socket.on("user added", function(data) {
                         console.log("user added")
                         console.log(data)
                         if (data) {
@@ -291,170 +337,245 @@
                         
                     });
                     console.log("after haha emit")
-                    socket.emit('new room', $roomnum.val(), function(data) {
-                        console.log("jsn: new room", data)
-                        if (data) {
-                            console.log("Host is syncing the new socket!")
-                            syncVideo(roomnum)
+                    
+                            socket.emit('new room', $roomnum.val(), function (data) {
+                                console.log("New Room came", data);
+                                if (data) {
+                                    console.log("Host is syncing the new socket!")
+                                    syncVideo(roomnum)
+                                }
+                            });
+
+                            $username.val('');
                         }
                     });
 
-                //     socket.on("room added", function(data) {
-                       
-                //        if (data) {
-                //            console.log("Host is syncing the new socket!")
-                //            syncVideo(roomnum)
-                //        }
-                //    })
+                    socket.on('get users', function (data) {
+                        var html = '';
+                        for (i = 0; i < data.length; i++) {
+                            // html += '<img src=./img/6.png style="height:20px; width:20px; border-radius:50%;">' + data[i] + '</br>';
+                            // html += '<img src=./img/1.png style="height:20px; width:20px; border-radius:50%"> <p style="padding-right: 10em;" class="list-group-item chat-users">' + data[i] + '</p>';
+                            html += '<div style="display: inline-block;">';
+                            html += '<img src="../static/img/6.png" style="height:20px; width:20px; border-radius:50%; margin-right:10px">';
+                            html += '<span>' + data[i] + '</span>';
+                            html += '</div>';
 
-                    $username.val('');
+                        }
+
+                        $users.html(html)
+                    });
+
+
+
+
+
+                    $('#roomnum').on('keypress', function (event) {
+                        var nosymbols = new RegExp("^[a-zA-Z0-9\s]+$");
+                        var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                        console.log(key)
+                        console.log(event.keyCode)
+
+                        if ($roomnum.val().length > 50 || !nosymbols.test(key) && event.keyCode != 13 && event.keyCode != 32 && event.keyCode != 45 && event.keyCode != 95) {
+                            event.preventDefault();
+                            return false;
+                        }
+                    });
+
+
+                    $('#username').on('keypress', function (event) {
+                        var nosymbols = new RegExp("^[a-zA-Z0-9\s]+$");
+                        var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+
+                        if ($username.val().length > 30 || !nosymbols.test(key) && event.keyCode != 13 && event.keyCode != 32 && event.keyCode != 45 && event.keyCode != 95) {
+                            event.preventDefault();
+                            return false;
+                        }
+                    });
+
+                });
+
+
+                function removeAt(idx) {
+                    socket.emit('remove at', {
+                        idx: idx
+                    })
                 }
-            });
 
-            socket.on('get users', function(data) {
-                console.log("inside get users")
-                console.log(data)
-                var html = '';
-                for (i = 0; i < data.length; i++) {
-                    html += '<li style="padding-right: 10em;" class="list-group-item chat-users">' + data[i] + '</li>';
-                  
+                // function playAt(idx) {
+                //     socket.emit('play at', {
+                //         idx: idx
+                //     }, function (data) {
+                //         var videoId = data.videoId
+                //         console.log("387 index fe cv")
+
+                //         socket.emit('change video', {
+                //             room: roomnum,
+                //             videoId: videoId,
+                //             time: 0
+                //         })
+                //     })
+                // }
+
+                function playAt(idx) {
+                    socket.emit('play at', {
+                        idx: idx
+                    })
                 }
 
-                $users.html(html)
-            });
+                socket.on("play at callback", function(data) {
+                    var videoId = data.videoId
 
-          
-            $('#roomnum').on('keypress', function(event) {
-                var nosymbols = new RegExp("^[a-zA-Z0-9\s]+$");
-                var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
-                console.log(key)
-                console.log(event.keyCode)
-              
-                if ($roomnum.val().length > 50 || !nosymbols.test(key) && event.keyCode != 13 && event.keyCode != 32 && event.keyCode != 45 && event.keyCode != 95) {
-                    event.preventDefault();
-                    return false;
-                }
-            });
-
-
-            $('#username').on('keypress', function(event) {
-                var nosymbols = new RegExp("^[a-zA-Z0-9\s]+$");
-                var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
-              
-                if ($username.val().length > 30 || !nosymbols.test(key) && event.keyCode != 13 && event.keyCode != 32 && event.keyCode != 45 && event.keyCode != 95) {
-                    event.preventDefault();
-                    return false;
-                }
-            });
-
-        });
-
-       
-        function removeAt(idx) {
-            socket.emit('remove at', {
-                idx: idx
-            })
-        }
-
-        // function playAt(idx) {
-        //     socket.emit('play at', {
-        //         idx: idx
-        //     }, function(data) {
-        //         var videoId = data.videoId
+                    
+                    socket.emit('change video', {
+                        room: roomnum,
+                        videoId: videoId,
+                        time: 0
+                    })
+                })
 
                 
-        //         socket.emit('change video', {
-        //             room: roomnum,
-        //             videoId: videoId,
-        //             time: 0
-        //         })
-        //     })
-        // }
-
-        function playAt(idx) {
-            socket.emit('play at', {
-                idx: idx
-            })
-        }
-
-        socket.on("play at callback", function(data) {
-            var videoId = data.videoId
-
-            
-            socket.emit('change video', {
-                room: roomnum,
-                videoId: videoId,
-                time: 0
-            })
-        })
+                var per = 0;
+                $(document).ready(function () {
+                    $("#persoff").css("height", $(document).height()).hide();
+                    $(document).click(function (e) {
+                        if (!$(e.target).hasClass('switch') && per == 1) {
+                            $("#persoff").toggle();
+                            per = 0;
+                        }
+                    });
+                    $(".switch").click(function () {
+                        $("#persoff").toggle();
+                        per += 1;
+                        if (per == 2) {
+                            per = 0;
+                        }
+                    });
+                });
 
 
-       
-        var per = 0;
-        $(document).ready(function() {
-            $("#persoff").css("height", $(document).height()).hide();
-            $(document).click(function(e) {
-                if (!$(e.target).hasClass('switch') && per == 1) {
-                    $("#persoff").toggle();
-                    per = 0;
+
+
+                socket.on('set id', function (data) {
+
+                    if (data.id != "" && nosymbols.test(data.id)) {
+                        document.getElementById('roomnum').value = data.id
+
+                        console.log("You are joining room: " + data.id)
+                    }
+
+                    socket.emit('reset url')
+                });
+
+                function copyInvite() {
+
+                    var copyText = document.getElementById("inv_input");
+                    console.log(copyText)
+
+                    copyText.select();
+
+                    document.execCommand("Copy");
+
+                    var tooltip = document.getElementById("myTooltip");
+                    tooltip.innerHTML = "Copied!";
                 }
-            });
-            $(".switch").click(function() {
-                $("#persoff").toggle();
-                per += 1;
-                if (per == 2) {
-                    per = 0;
+
+                function outFunc() {
+                    var tooltip = document.getElementById("myTooltip");
+                    tooltip.innerHTML = "Copy to clipboard";
                 }
-            });
-        });
+                
+                color_list = [
+                    "#3D52D5",
+                    "#B0B15A",
+                    "#4CBAF9",
+                    "#F06FA2",
+                    "#7C48A4",
+                    "#F05E49",
+                    "#6AC27B",
+                    "#AC9CF5",
+                    "#7B6D3F",
+                    "#D8C70E"
+                ]
 
+                function getUserInfo(userIndex) {
+                    // You can implement this function to fetch user info from your data structure
+                    // For now, we'll return a hardcoded object
+                    // You should modify this to fetch user info from your actual data structure
+                    return {
+                        image: userIndex + ".png", // Assuming image files are named as "0.jpeg", "1.jpeg", etc.
+                        nameColor: color_list[userIndex] // Hardcoded name color for demonstration
+                    };
+                }
+
+                function addMessage(data, userIndex) {
+                    
+                    if (userIndex !== undefined) {
+                        var user = getUserInfo(userIndex); // Fetch user info
+                        if (user) {
+                            var messageWell = document.createElement("div");
+                            messageWell.classList.add("well", "well-sm", "message-well");
+                            
+                            var userImage = document.createElement("img");
+                            userImage.src = "../static/img/" + user.image; // Set image source
+                            userImage.style.width = "25px"; // Set image width
+                            userImage.style.height = "25px";
+                            userImage.style.borderRadius = "50%";
+                            userImage.classList.add("user-image");
+                            
+                            
+                            
+                            var userNameElement = document.createElement("strong");
+                            userNameElement.style.color = user.nameColor; // Set name color
+                            userNameElement.textContent = data.user ;
+                            userNameElement.style.marginLeft = "10px";
+                            
+                            var messageText = document.createElement("div");
+                            messageText.textContent = data.msg;
+                            messageText.style.marginLeft = "35px";
+
+                            messageWell.appendChild(userImage);
+                            messageWell.appendChild(userNameElement);
+                            // messageWell.appendChild(document.createTextNode(": ")); // Add colon separator
+                            messageWell.appendChild(messageText);
+
+                            // Append message well to chat container
+                            var chatContainer = document.getElementById("chat");
+                            chatContainer.appendChild(messageWell);
+                            chatContainer.scrollTop = chatContainer.scrollHeight; // Scroll to bottom
+                        }
+                    }
+                }
+
+                function appendMessageToChat(data) {
+                    
+                    var messageWell = document.createElement("div");
+                    messageWell.classList.add("well", "well-sm", "message-well");
+                    
+                    var messageText = document.createElement("div");
+                    messageText.textContent = data.msg;
+                    messageText.style.marginLeft = "35px";
+                    
+                    messageWell.appendChild(messageText);
+                    var chatContainer = document.getElementById("chat");
+                    chatContainer.appendChild(messageWell);
+                    chatContainer.scrollTop = chatContainer.scrollHeight; // Scroll to bottom
+                }
+
+                document.getElementById('sendButton').draggable = false;
+
+            </script>
         
+        <script src="/static/js/dependencies/jquery.min.js"></script>
+        <script src="/static/js/dependencies/bootstrap.bundle.min.js"></script>
+        <script src="/static/js/dependencies/scrolling-nav.js"></script>
+        <script src="/static/js/dependencies/bootstrap-notify.min.js"></script>
+        <script src="/static/js/dependencies/jquery.easing.min.js"></script>
+        <script src="/static/js/sync.js"></script>
+        <script src="/static/js/player.js"></script>
+        <script src="/static/js/host.js"></script>
+        <script src="/static/js/events.js"></script>
+        <script src="/static/js/yt.js"></script>
 
-       
-        socket.on('set id', function(data) {
-           
-            if (data.id != "" && nosymbols.test(data.id)) {
-                document.getElementById('roomnum').value = data.id
-           
-                console.log("You are joining room: " + data.id)
-            }
-            
-            socket.emit('reset url')
-        });
-
-        function copyInvite() {
-        
-            var copyText = document.getElementById("inv_input");
-            console.log(copyText)
-         
-            copyText.select();
-          
-            document.execCommand("Copy");
-         
-            var tooltip = document.getElementById("myTooltip");
-            tooltip.innerHTML = "Copied!";
-        }
-
-        function outFunc() {
-            var tooltip = document.getElementById("myTooltip");
-            tooltip.innerHTML = "Copy to clipboard";
-        }
-
-       
-    </script>
-
-  
-    <script src="/static/js/dependencies/jquery.min.js"></script>
-    <script src="/static/js/dependencies/bootstrap.bundle.min.js"></script>
-    <script src="/static/js/dependencies/scrolling-nav.js"></script>
-    <script src="/static/js/dependencies/bootstrap-notify.min.js"></script>
-    <script src="/static/js/dependencies/jquery.easing.min.js"></script>
-    <script src="/static/js/sync.js"></script>
-    <script src="/static/js/player.js"></script>
-    <script src="/static/js/host.js"></script>
-    <script src="/static/js/events.js"></script>
-    <script src="/static/js/yt.js"></script>
-   
 
 </body>
 
