@@ -54,7 +54,7 @@
                         <p style="color:red; margin-bottom: 0px" id="missinginfo2"></p>
                         <label>Enter Room ID</label>
                         <br/>
-                        <input class="form-control" id="roomnum" />
+                        <input class="form-control" id="roomnum", value="{{ room }}" />
                         <br/>
 
                         <input style="margin-top: 10px;" type="submit" class="btn btn-danger" value="Enter" />
@@ -292,20 +292,20 @@
                     });
                     console.log("after haha emit")
                     socket.emit('new room', $roomnum.val(), function(data) {
-                       
+                        console.log("jsn: new room", data)
                         if (data) {
                             console.log("Host is syncing the new socket!")
                             syncVideo(roomnum)
                         }
                     });
 
-                    socket.on("room added", function(data) {
+                //     socket.on("room added", function(data) {
                        
-                       if (data) {
-                           console.log("Host is syncing the new socket!")
-                           syncVideo(roomnum)
-                       }
-                   })
+                //        if (data) {
+                //            console.log("Host is syncing the new socket!")
+                //            syncVideo(roomnum)
+                //        }
+                //    })
 
                     $username.val('');
                 }
@@ -356,20 +356,37 @@
             })
         }
 
+        // function playAt(idx) {
+        //     socket.emit('play at', {
+        //         idx: idx
+        //     }, function(data) {
+        //         var videoId = data.videoId
+
+                
+        //         socket.emit('change video', {
+        //             room: roomnum,
+        //             videoId: videoId,
+        //             time: 0
+        //         })
+        //     })
+        // }
+
         function playAt(idx) {
             socket.emit('play at', {
                 idx: idx
-            }, function(data) {
-                var videoId = data.videoId
-
-                
-                socket.emit('change video', {
-                    room: roomnum,
-                    videoId: videoId,
-                    time: 0
-                })
             })
         }
+
+        socket.on("play at callback", function(data) {
+            var videoId = data.videoId
+
+            
+            socket.emit('change video', {
+                room: roomnum,
+                videoId: videoId,
+                time: 0
+            })
+        })
 
 
        

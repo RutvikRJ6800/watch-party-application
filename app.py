@@ -20,6 +20,10 @@ connections = []
 def index():
     return render_template('index.html')
 
+@app.route('/<room>')
+def room(room):
+    return render_template('index.html', room=room)
+
 @socketio.on("new user")
 def handle_new_user(username):
     print(f"new user {username} is here")
@@ -51,7 +55,7 @@ def updateQueueVideos(roomnum):
 
 @socketio.on("new room")
 def handle_new_room(roomnum):
-    room_name = "room-" + roomnum
+    room_name = "room-" + str(roomnum)
 
     userrooms[request.sid] = roomnum
 
@@ -102,12 +106,12 @@ def handle_new_room(roomnum):
 
     if request.sid != host:
         socketio.sleep(1)
-        emit('getData', room=host)
-
+        # emit('getData', room=host)
+        emit('getData', room=host, broadcast=True)
         rooms[room_name]['users'].append(sidToUsername[request.sid])
 
     updateRoomUsers(roomnum)
-    return True
+    # return True
 
 @socketio.on('play video')
 def handle_play_video(data):
@@ -116,15 +120,6 @@ def handle_play_video(data):
     socketio.emit('playVideoClient', room="room-" + roomnum)
     # socketio.emit('playVideoClient', {"success":True}) #this line change 
 
-@socketio.on('get video')
-def handle_get_video():
-    room_name = "room-" + userrooms[request.sid]
-    room = rooms.get(room_name)
-    if room is not None:
-        curr_video = room.get('currVideo', {}).get('yt')
-        emit('video sent', curr_video)
-  
-
 @socketio.on('disconnect')
 def handle_disconnect():
     user_id = request.sid
@@ -132,10 +127,11 @@ def handle_disconnect():
     if username:
         del users[user_id]
     
-    connections.remove(user_id)
+    if user_id in connections:
+        connections.remove(user_id)
 
     room_num = userrooms.get(user_id)
-    room_name = "room-" + room_num
+    room_name = "room-" + str(room_num)
     room = rooms.get(room_name)
 
     if room:
@@ -156,57 +152,58 @@ def handle_sync_video(data):
     time = data.get('time')
     state = data.get('state')
     video_id = data.get('videoId')
-    player_id = rooms.get("room-" + room_num, {}).get('currPlayer')
-    socketio.emit('syncVideoClient', {'time': time, 'state': state, 'videoId': video_id, 'playerId': player_id}, room="room-" + room_num)
+    player_id = rooms.get("room-" + str(room_num), {}).get('currPlayer')
+    socketio.emit('syncVideoClient', {'time': time, 'state': state, 'videoId': video_id, 'playerId': player_id}, room="room-" + str(room_num))
 
 @socketio.on('play other')
 def handle_play_other(data):
     room_num = data.get('room')
-    socketio.emit('justPlay', room="room-" + room_num, skip_sid=request.sid)
+    socketio.emit('justPlay', room="room-" + str(room_num), skip_sid=request.sid)
 
 @socketio.on('pause other')
 def handle_pause_other(data):
     room_num = data.get('room')
-    socketio.emit('justPause', room="room-" + room_num, skip_sid=request.sid)
+    socketio.emit('justPause', room="room-" + str(room_num), skip_sid=request.sid)
 
 @socketio.on('seek other')
 def handle_seek_other(data):
     room_num = data.get('room')
     curr_time = data.get('time')
-    socketio.emit('justSeek', {'time': curr_time}, room="room-" + room_num, skip_sid=request.sid)
+    socketio.emit('justSeek', {'time': curr_time}, room="room-" + str(room_num), skip_sid=request.sid)
 
 @socketio.on('get video')
 def handle_get_video():
     print("inside handle get video")
     room_num = userrooms.get(request.sid)
     if room_num:
-        curr_video = rooms.get("room-" + room_num, {}).get('currVideo', {}).get('yt')
-        socketio.emit('get video callback', curr_video, room="room-" + room_num)
+        curr_video = rooms.get("room-" + str(room_num), {}).get('currVideo', {}).get('yt')
+        socketio.emit('get video callback', curr_video, room="room-" + str(room_num))
 
 @socketio.on('change video')
 def handle_change_video(data):
+    print("in h_change_video")
     room_num = data.get('room')
     video_id = data.get('videoId')
     time = data.get('time')
-    host = rooms.get("room-" + room_num, {}).get('host')
+    host = rooms.get("room-" + str(room_num), {}).get('host')
 
-    prev_video_id = rooms.get("room-" + room_num, {}).get('currVideo', {}).get('yt')
+    prev_video_id = rooms.get("room-" + str(room_num), {}).get('currVideo', {}).get('yt')
     prev_time = time
-    rooms["room-" + room_num]['prevVideo']['yt'] = {'id': prev_video_id, 'time': prev_time}
-    rooms["room-" + room_num]['currVideo']['yt'] = video_id
+    rooms["room-" + str(room_num)]['prevVideo']['yt'] = {'id': prev_video_id, 'time': prev_time}
+    rooms["room-" + str(room_num)]['currVideo']['yt'] = video_id
     
-    socketio.emit('changeVideoClient', {'videoId': video_id}, room="room-" + room_num)
+    socketio.emit('changeVideoClient', {'videoId': video_id}, room="room-" + str(room_num))
 
     if data.get('prev'):
         print("call back needed here")
-        # callback()
+        socketio.emit("change video callback", True)
 
 @socketio.on('send message')
 def handle_send_message(data):
     encoded_msg = data.replace("<", "&lt;").replace(">", "&gt;")
     room_num = userrooms.get(request.sid)
     if room_num:
-        socketio.emit('new message', {'msg': encoded_msg, 'user': users.get(request.sid)}, room="room-" + room_num)
+        socketio.emit('new message', {'msg': encoded_msg, 'user': users.get(request.sid)}, room="room-" + str(room_num))
 
 @socketio.on('change time')
 def handle_change_time(data):
@@ -218,7 +215,7 @@ def handle_change_time(data):
 def handle_sync_host(data):
     room_num = userrooms.get(request.sid)
     if room_num:
-        host = rooms.get("room-" + room_num, {}).get('host')
+        host = rooms.get("room-" + str(room_num), {}).get('host')
         if request.sid != host:
             socketio.emit('getData', room=host)
         else:
@@ -231,7 +228,7 @@ def handle_player_status(data):
 @socketio.on('get host data')
 def handle_get_host_data(data):
     room_num = data.get('room')
-    host = rooms.get("room-" + room_num, {}).get('host')
+    host = rooms.get("room-" + str(room_num), {}).get('host')
     if host:
         if data.get('currTime') is None:
             caller = request.sid
