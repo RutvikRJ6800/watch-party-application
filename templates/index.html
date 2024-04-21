@@ -191,10 +191,13 @@
             });
 
             socket.on('new message', function(data) {
+                console.log("new message", data)
                 var last_div = $('.chat > div:last')[0]
+                console.log(last_div)
 
                
                 if (last_div !== undefined) {
+                    console.log("new message1")
                     var myRegex = /.*<strong>(.+)<\/strong>.*/g
                     var match = myRegex.exec(last_div.innerHTML)
                     console.log(last_div.innerHTML)
@@ -205,11 +208,14 @@
                     }
                 }
                 if (data.user != last_user) {
+                    console.log("new message2")
                     $chat.append('<div class="well well-sm message-well"><strong>' + data.user + '</strong>: ' + data.msg + '</div>');
                 }
                
                 else {
+                    console.log("new message3")
                     last_div.innerHTML = last_div.innerHTML + " <br> " + data.msg
+                    console.log(last_div)
                 }
                 
                 $('div#chat').scrollTop($('div#chat')[0].scrollHeight)
