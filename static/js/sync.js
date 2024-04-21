@@ -92,7 +92,6 @@ function changeVideoId(roomnum, id) {
 }
 
 // socket.on('getData', function(data) {
-//     console.log("Hi im the not host, you called?")
 //     socket.emit('sync host', {});
 // });
 
@@ -110,7 +109,7 @@ function changeSinglePlayer(playerId) {
 
 
 var roomnum = 1
-var id = "tXha7F48HyU"
+var id = "CfBPEhAq6FY"
 
 socket.on('playVideoClient', function(data) {
     console.log("inside playvideoclient")
@@ -169,12 +168,18 @@ socket.on('changeVideoClient', function(data) {
     console.log("video id is: " + videoId)
 
     socket.emit('get video', function(id) {
-        // console.log("it really is " + id)
-        // videoId = id
-        // id = videoId
-        // player.loadVideoById(videoId);
+        console.log("it really is " + id)
+        videoId = id
+        id = videoId
+        player.loadVideoById(videoId);
         
     })
+
+    setTimeout(function() {
+        console.log("resyncing with host after video change")
+        socket.emit('sync host', {});
+    }, 1000);
+
 });
 
 socket.on("get video callback", function(id){
@@ -182,12 +187,7 @@ socket.on("get video callback", function(id){
     videoId = id
     id = videoId
     player.loadVideoById(videoId);
-
-
-    setTimeout(function() {
-        console.log("resyncing with host after video change")
-        socket.emit('sync host', {});
-    }, 1000);
+    
 })
 
 socket.on('changeTime', function(data) {

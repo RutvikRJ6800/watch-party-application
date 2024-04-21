@@ -37,10 +37,7 @@ def updateRoomUsers(roomnum):
     room = rooms.get(room_name)
     print(room)
     if room is not None:
-        print("uru if true")
         roomUsers = room.get('users', [])
-        print(roomUsers)
-        # socketio.emit('get users', roomUsers)
         socketio.emit('get users', roomUsers, room=room_name)
 
 def updateQueueVideos(roomnum):
@@ -72,8 +69,8 @@ def handle_new_room(roomnum):
         rooms[room_name] = {
             'host': None,
             'currPlayer': 0,
-            'currVideo': {'yt': 'tXha7F48HyU'},
-            'prevVideo': {'yt': {'id': 'tXha7F48HyU', 'time': 0}},
+            'currVideo': {'yt': 'CfBPEhAq6FY'},
+            'prevVideo': {'yt': {'id': 'CfBPEhAq6FY', 'time': 0}},
             'hostName': None,
             'users': [],
             'queue': {'yt': []}
@@ -117,7 +114,6 @@ def handle_new_room(roomnum):
 @socketio.on('play video')
 def handle_play_video(data):
     roomnum = data['room']
-    print("hello pvc")
     socketio.emit('playVideoClient', room="room-" + roomnum)
     # socketio.emit('playVideoClient', {"success":True}) #this line change 
 
@@ -138,6 +134,7 @@ def handle_disconnect():
     if room:
         if user_id == room.get('host'):
             first_user_id = list(room.get('sockets'))[0]
+            # first_user_id = list(room.get('users'))[0]
             socketio.emit('autoHost', {'roomnum': room_num}, room=first_user_id)
 
         if username in room.get('users', []):
@@ -174,7 +171,6 @@ def handle_seek_other(data):
 
 @socketio.on('get video')
 def handle_get_video():
-    print("inside handle get video")
     room_num = userrooms.get(request.sid)
     if room_num:
         curr_video = rooms.get("room-" + str(room_num), {}).get('currVideo', {}).get('yt')
@@ -250,27 +246,6 @@ def handle_auto_sync(data):
 
     import threading
     threading.Thread(target=sync_host).start()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 if __name__ == '__main__':

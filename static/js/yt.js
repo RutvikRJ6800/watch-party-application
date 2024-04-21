@@ -9,7 +9,6 @@ var player;
 var playerStatus = -1;
 
 function onYouTubeIframeAPIReady() {
-    console.log("onytapiready")
     player = new YT.Player('player', {
         playerVars: {
             autoplay: 0,
@@ -81,8 +80,6 @@ function onPlayerStateChange(event) {
 }
 
 function play() {
-    console.log("plyer")
-    console.log(playerStatus, player)
     if (playerStatus == -1 || playerStatus == 2) {
         player.playVideo();
     } else {
@@ -123,7 +120,7 @@ socket.on('get playlist videos', function(data) {
             part: 'snippet,contentDetails',
             playlistId: playlistId,
             maxResults: '50',
-            key: AIzaSyCcundnMWXXlz9ELzX1bgaUbAIIIcpLUUk
+            key: data.api_key
         },
         function(data) {
           for (let video of data.items) {

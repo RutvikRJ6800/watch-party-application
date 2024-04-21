@@ -17,8 +17,7 @@ socket.on('getData', function(data) {
 });
 
 socket.on('syncHost', function(data) {
-    console.log("syncHost", data)
-    syncVideo(data)
+    syncVideo(roomnum)
 });
 
 function changeHost(roomnum) {

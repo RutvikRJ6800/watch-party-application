@@ -57,7 +57,7 @@
                         <p style="color:red; margin-bottom: 0px" id="missinginfo2"></p>
                         <label>Enter Room ID</label>
                         <br />
-                        <input class="form-control" id="roomnum" required="true" />
+                        <input class="form-control" id="roomnum" required="true", value="{{room}}" />
                         <br />
 
                         <input style="margin-top: 10px;" type="submit" class="btn btn-primary" value="Enter" />
@@ -201,7 +201,7 @@
                 var roomnum = 1
                 var id = "M7lc1UVf-VE"
                 var username = ""
-                var nosymbols = new RegExp("^(([a-zA-Z0-9_-][a-zA-Z0-9 -]*[a-zA-Z0-9-])|([a-zA-Z0-9_-]*))$");
+                var nosymbols = new RegExp("^(([a-zA-Z0-9_-][a-zA-Z0-9 _-]*[a-zA-Z0-9_-])|([a-zA-Z0-9_-]*))$");
 
                 $(function () {
                     var $messageForm = $('#messageForm');
@@ -238,7 +238,7 @@
                         var last_div = $('.chat > div:last')[0]
 
                         // if (last_div !== undefined) {
-                        //     var myRegex = /.<strong>(.+)<\/strong>./g
+                        //     var myRegex = /.*<strong>(.+)<\/strong>.*/g
                         //     var match = myRegex.exec(last_div.innerHTML)
                         //     console.log(last_div.innerHTML)
                         //     var last_user = ""
@@ -483,85 +483,7 @@
                     var tooltip = document.getElementById("myTooltip");
                     tooltip.innerHTML = "Copy to clipboard";
                 }
-                
-                color_list = [
-                    "#3D52D5",
-                    "#B0B15A",
-                    "#4CBAF9",
-                    "#F06FA2",
-                    "#7C48A4",
-                    "#F05E49",
-                    "#6AC27B",
-                    "#AC9CF5",
-                    "#7B6D3F",
-                    "#D8C70E"
-                ]
 
-                function getUserInfo(userIndex) {
-                    // You can implement this function to fetch user info from your data structure
-                    // For now, we'll return a hardcoded object
-                    // You should modify this to fetch user info from your actual data structure
-                    return {
-                        image: userIndex + ".png", // Assuming image files are named as "0.jpeg", "1.jpeg", etc.
-                        nameColor: color_list[userIndex] // Hardcoded name color for demonstration
-                    };
-                }
-
-                function addMessage(data, userIndex) {
-                    
-                    if (userIndex !== undefined) {
-                        var user = getUserInfo(userIndex); // Fetch user info
-                        if (user) {
-                            var messageWell = document.createElement("div");
-                            messageWell.classList.add("well", "well-sm", "message-well");
-                            
-                            var userImage = document.createElement("img");
-                            userImage.src = "../static/img/" + user.image; // Set image source
-                            userImage.style.width = "25px"; // Set image width
-                            userImage.style.height = "25px";
-                            userImage.style.borderRadius = "50%";
-                            userImage.classList.add("user-image");
-                            
-                            
-                            
-                            var userNameElement = document.createElement("strong");
-                            userNameElement.style.color = user.nameColor; // Set name color
-                            userNameElement.textContent = data.user ;
-                            userNameElement.style.marginLeft = "10px";
-                            
-                            var messageText = document.createElement("div");
-                            messageText.textContent = data.msg;
-                            messageText.style.marginLeft = "35px";
-
-                            messageWell.appendChild(userImage);
-                            messageWell.appendChild(userNameElement);
-                            // messageWell.appendChild(document.createTextNode(": ")); // Add colon separator
-                            messageWell.appendChild(messageText);
-
-                            // Append message well to chat container
-                            var chatContainer = document.getElementById("chat");
-                            chatContainer.appendChild(messageWell);
-                            chatContainer.scrollTop = chatContainer.scrollHeight; // Scroll to bottom
-                        }
-                    }
-                }
-
-                function appendMessageToChat(data) {
-                    
-                    var messageWell = document.createElement("div");
-                    messageWell.classList.add("well", "well-sm", "message-well");
-                    
-                    var messageText = document.createElement("div");
-                    messageText.textContent = data.msg;
-                    messageText.style.marginLeft = "35px";
-                    
-                    messageWell.appendChild(messageText);
-                    var chatContainer = document.getElementById("chat");
-                    chatContainer.appendChild(messageWell);
-                    chatContainer.scrollTop = chatContainer.scrollHeight; // Scroll to bottom
-                }
-
-                document.getElementById('sendButton').draggable = false;
 
             </script>
         
