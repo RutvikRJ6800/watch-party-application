@@ -33,9 +33,6 @@
 
     <link href="/static/css/style.css" rel="stylesheet">
     
-
-  
-
 </head>
 
 <body class="bg-light" id="Home">
@@ -248,12 +245,17 @@
                     noname2.innerHTML = "Please enter a room ID without symbols or leading/trailing whitespace!"
                 } else {
                     username = $username.val()
-                    
+                    console.log("before emit")
+                    console.log($username.val())
                     socket.emit('new user', $username.val(), function(data) {
+                        console.log("before emit1")
+                        console.log(data)
                         if (data) {
-                            
+
+                            console.log("trying to hide")
+                        
                             $userFormArea.hide();
-                            
+                            console.log("trying to show")
                             $roomArea.show();
                            
                             
@@ -266,7 +268,29 @@
                         }
                         
                     });
-                 
+
+                    socket.on("user added", function(data) {
+                        console.log("user added")
+                        console.log(data)
+                        if (data) {
+
+                            console.log("trying to hide")
+                        
+                            $userFormArea.hide();
+                            console.log("trying to show")
+                            $roomArea.show();
+                           
+                            
+                            if ($roomnum.val() != "") {
+                                roomnum = $roomnum.val()
+                            }
+   
+                            document.getElementById("inv_input").value = "localhost:5000/" + roomnum
+                          
+                        }
+                        
+                    });
+                    console.log("after haha emit")
                     socket.emit('new room', $roomnum.val(), function(data) {
                        
                         if (data) {
@@ -275,11 +299,21 @@
                         }
                     });
 
+                    socket.on("room added", function(data) {
+                       
+                       if (data) {
+                           console.log("Host is syncing the new socket!")
+                           syncVideo(roomnum)
+                       }
+                   })
+
                     $username.val('');
                 }
             });
 
             socket.on('get users', function(data) {
+                console.log("inside get users")
+                console.log(data)
                 var html = '';
                 for (i = 0; i < data.length; i++) {
                     html += '<li style="padding-right: 10em;" class="list-group-item chat-users">' + data[i] + '</li>';
@@ -398,12 +432,9 @@
     <script src="/static/js/dependencies/scrolling-nav.js"></script>
     <script src="/static/js/dependencies/bootstrap-notify.min.js"></script>
     <script src="/static/js/dependencies/jquery.easing.min.js"></script>
-
-
-   
     <script src="/static/js/sync.js"></script>
-    <script src="/static/js/host"></script>
     <script src="/static/js/player.js"></script>
+    <script src="/static/js/host.js"></script>
     <script src="/static/js/events.js"></script>
     <script src="/static/js/yt.js"></script>
    

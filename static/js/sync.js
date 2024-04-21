@@ -112,6 +112,7 @@ var roomnum = 1
 var id = "tXha7F48HyU"
 
 socket.on('playVideoClient', function(data) {
+    console.log("inside playvideoclient")
     play()
 });
 
