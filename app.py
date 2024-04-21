@@ -13,7 +13,7 @@ users = {} # maps sid to username
 sidToUsername = {}
 userrooms = {}
 roomToHost = {} # maps room to sid of the host
-
+connections = []
 
 
 @app.route('/')
@@ -23,7 +23,8 @@ def index():
 @socketio.on("new user")
 def handle_new_user(username):
     print(f"new user {username} is here")
-    users[username] = request.sid
+    users[request.sid] = username
+    connections.append(request.sid)
     sidToUsername[request.sid] = username
     emit('user added', {'success': True})
 
@@ -37,7 +38,6 @@ def updateRoomUsers(roomnum):
         print(roomUsers)
         # socketio.emit('get users', roomUsers)
         socketio.emit('get users', roomUsers, room=room_name)
-        print("after emit")
 
 def updateQueueVideos(roomnum):
     room_name = "room-" + roomnum
@@ -51,38 +51,7 @@ def updateQueueVideos(roomnum):
 
 @socketio.on("new room")
 def handle_new_room(roomnum):
-    # userrooms[request.sid] = roomno
-
-    # host = None
-    # init = False
-
-    # # username = session['username']
-    # # room = data['room']
-    # # join_room(room)
-    # # send(username + ' has entered the room.', to=room)
-
-
-    # if(roomno == None or roomno == ""):
-    #     roomno = '1'
-    #     userrooms[request.sid] = '1'
-
-    # if roomno not in rooms:
-    #     rooms.append(roomno)
-    #     socketio.send(request.sid)
-    #     host = request.sid
-    #     init = True
-
-    #     socketio.emit('setHost') # send this in front end
-    # else:
-    #     host = roomToHost[roomno]
-
-    
-
-    # print("roomno", roomno)
-    # socketio.send()
-    # print(roomnum, type(roomnum))
     room_name = "room-" + roomnum
-    join_room(room_name)
 
     userrooms[request.sid] = roomnum
 
@@ -92,6 +61,8 @@ def handle_new_room(roomnum):
     if roomnum is None or roomnum == "":
         roomnum = '1'
         userrooms[request.sid] = '1'
+
+    join_room(room_name)
 
     if room_name not in rooms:
         rooms[room_name] = {
@@ -154,87 +125,132 @@ def handle_get_video():
         emit('video sent', curr_video)
   
 
-'''
-socket.on('new room', function(data, callback) {
-        socket.roomnum = data;
+@socketio.on('disconnect')
+def handle_disconnect():
+    user_id = request.sid
+    username = users.get(user_id)
+    if username:
+        del users[user_id]
+    
+    connections.remove(user_id)
 
-        userrooms[socket.id] = data
+    room_num = userrooms.get(user_id)
+    room_name = "room-" + room_num
+    room = rooms.get(room_name)
 
-        var host = null
-        var init = false
+    if room:
+        if user_id == room.get('host'):
+            first_user_id = list(room.get('sockets'))[0]
+            socketio.emit('autoHost', {'roomnum': room_num}, room=first_user_id)
 
-        if (socket.roomnum == null || socket.roomnum == "") {
-            socket.roomnum = '1'
-            userrooms[socket.id] = '1'
-        }
+        if username in room.get('users', []):
+            room['users'].remove(username)
+            updateRoomUsers(room_num)
 
-        if (!rooms.includes(socket.roomnum)) {
-            rooms.push(socket.roomnum);
-        }
+    del userrooms[user_id]
 
-        if (io.sockets.adapter.rooms['room-' + socket.roomnum] === undefined) {
-            socket.send(socket.id)
-            host = socket.id
-            init = true
 
-            socket.emit('setHost');
-        } else {
-            host = io.sockets.adapter.rooms['room-' + socket.roomnum].host
-        }
+@socketio.on('sync video')
+def handle_sync_video(data):
+    room_num = data.get('room')
+    time = data.get('time')
+    state = data.get('state')
+    video_id = data.get('videoId')
+    player_id = rooms.get("room-" + room_num, {}).get('currPlayer')
+    socketio.emit('syncVideoClient', {'time': time, 'state': state, 'videoId': video_id, 'playerId': player_id}, room="room-" + room_num)
 
-        socket.join("room-" + socket.roomnum);
+@socketio.on('play other')
+def handle_play_other(data):
+    room_num = data.get('room')
+    socketio.emit('justPlay', room="room-" + room_num, skip_sid=request.sid)
 
-        if (init) {
-            io.sockets.adapter.rooms['room-' + socket.roomnum].host = host
-            io.sockets.adapter.rooms['room-' + socket.roomnum].currPlayer = 0
-            io.sockets.adapter.rooms['room-' + socket.roomnum].currVideo = {
-                yt: 'tXha7F48HyU',
-            }
-            io.sockets.adapter.rooms['room-' + socket.roomnum].prevVideo = {
-                yt: {
-                    id: 'tXha7F48HyU',
-                    time: 0
-                },
-                
-            }
+@socketio.on('pause other')
+def handle_pause_other(data):
+    room_num = data.get('room')
+    socketio.emit('justPause', room="room-" + room_num, skip_sid=request.sid)
 
-            io.sockets.adapter.rooms['room-' + socket.roomnum].hostName = socket.username
-            io.sockets.adapter.rooms['room-' + socket.roomnum].users = [socket.username]
-            io.sockets.adapter.rooms['room-' + socket.roomnum].queue = {
-                yt: []
-            }
-        }
+@socketio.on('seek other')
+def handle_seek_other(data):
+    room_num = data.get('room')
+    curr_time = data.get('time')
+    socketio.emit('justSeek', {'time': curr_time}, room="room-" + room_num, skip_sid=request.sid)
 
-        io.sockets.in("room-" + socket.roomnum).emit('changeHostLabel', {
-            username: io.sockets.adapter.rooms['room-' + socket.roomnum].hostName
-        })
+@socketio.on('get video')
+def handle_get_video():
+    print("inside handle get video")
+    room_num = userrooms.get(request.sid)
+    if room_num:
+        curr_video = rooms.get("room-" + room_num, {}).get('currVideo', {}).get('yt')
+        socketio.emit('get video callback', curr_video, room="room-" + room_num)
 
-        updateQueueVideos()
+@socketio.on('change video')
+def handle_change_video(data):
+    room_num = data.get('room')
+    video_id = data.get('videoId')
+    time = data.get('time')
+    host = rooms.get("room-" + room_num, {}).get('host')
 
-        var currVideo = io.sockets.adapter.rooms['room-' + socket.roomnum].currVideo.yt
+    prev_video_id = rooms.get("room-" + room_num, {}).get('currVideo', {}).get('yt')
+    prev_time = time
+    rooms["room-" + room_num]['prevVideo']['yt'] = {'id': prev_video_id, 'time': prev_time}
+    rooms["room-" + room_num]['currVideo']['yt'] = video_id
+    
+    socketio.emit('changeVideoClient', {'videoId': video_id}, room="room-" + room_num)
 
-        socket.emit('changeVideoClient', {
-            videoId: currVideo
-        });
+    if data.get('prev'):
+        print("call back needed here")
+        # callback()
 
-        if (socket.id != host) {
-            
+@socketio.on('send message')
+def handle_send_message(data):
+    encoded_msg = data.replace("<", "&lt;").replace(">", "&gt;")
+    room_num = userrooms.get(request.sid)
+    if room_num:
+        socketio.emit('new message', {'msg': encoded_msg, 'user': users.get(request.sid)}, room="room-" + room_num)
 
-            setTimeout(function() {
-                socket.broadcast.to(host).emit('getData');
-            }, 1000);
-            
-            io.sockets.adapter.rooms['room-' + socket.roomnum].users.push(socket.username)
+@socketio.on('change time')
+def handle_change_time(data):
+    caller = data.get('id')
+    time = data.get('time')
+    socketio.emit('changeTime', {'time': time}, room=caller)
 
-            
-        } 
+@socketio.on('sync host')
+def handle_sync_host(data):
+    room_num = userrooms.get(request.sid)
+    if room_num:
+        host = rooms.get("room-" + room_num, {}).get('host')
+        if request.sid != host:
+            socketio.emit('getData', room=host)
+        else:
+            socketio.emit('syncHost', room=request.sid)
 
-        updateRoomUsers(socket.roomnum)
+@socketio.on('player status')
+def handle_player_status(data):
+    print(data)
 
-    });
+@socketio.on('get host data')
+def handle_get_host_data(data):
+    room_num = data.get('room')
+    host = rooms.get("room-" + room_num, {}).get('host')
+    if host:
+        if data.get('currTime') is None:
+            caller = request.sid
+            socketio.emit('getPlayerData', {'room': room_num, 'caller': caller}, room=host)
+        else:
+            caller = data.get('caller')
+            socketio.emit('compareHost', data, room=caller)
 
-'''
+@socketio.on('auto sync')
+def handle_auto_sync(data):
+    import time
 
+    def sync_host():
+        while True:
+            socketio.emit('syncHost')
+            time.sleep(5)
+
+    import threading
+    threading.Thread(target=sync_host).start()
 
 
 

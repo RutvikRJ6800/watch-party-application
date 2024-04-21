@@ -144,6 +144,25 @@ socket.on('syncVideoClient', function(data) {
 
 });
 
+// socket.on('changeVideoClient', function(data) {
+//     var videoId = data.videoId;
+//     console.log("video id is: " + videoId)
+
+//     socket.emit('get video', function(id) {
+//         console.log("it really is " + id)
+//         videoId = id
+//         id = videoId
+//         player.loadVideoById(videoId);
+        
+//     })
+
+//     setTimeout(function() {
+//         console.log("resyncing with host after video change")
+//         socket.emit('sync host', {});
+//     }, 1000);
+
+// });
+
 socket.on('changeVideoClient', function(data) {
     var videoId = data.videoId;
     console.log("video id is: " + videoId)
@@ -162,6 +181,14 @@ socket.on('changeVideoClient', function(data) {
     }, 1000);
 
 });
+
+socket.on("get video callback", function(id){
+    console.log("get video callback :: it really is " + id)
+    videoId = id
+    id = videoId
+    player.loadVideoById(videoId);
+    
+})
 
 socket.on('changeTime', function(data) {
     var time = data.time
