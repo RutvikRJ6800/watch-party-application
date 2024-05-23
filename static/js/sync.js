@@ -112,6 +112,7 @@ var roomnum = 1
 var id = "tXha7F48HyU"
 
 socket.on('playVideoClient', function(data) {
+    console.log("inside playvideoclient")
     play()
 });
 
@@ -125,6 +126,7 @@ socket.on('syncVideoClient', function(data) {
     var videoId = data.videoId
     var playerId = data.playerId
     if (currPlayer != playerId) {
+        console.log("syncVideoClient", "changeSinglePlayer")
         changeSinglePlayer(playerId)
     } else {
         var clientTime = player.getCurrentTime();
@@ -143,12 +145,15 @@ socket.on('syncVideoClient', function(data) {
 
 });
 
+
 socket.on('changeVideoClient', function(data) {
     var videoId = data.videoId;
-    console.log("video id is: " + videoId)
+    console.log("cvc: video id is: " + videoId)
 
-    socket.emit('get video', function(id) {
-        console.log("it really is " + id)
+    socket.emit('get video')
+
+    socket.on("get video callback", function(id){
+        console.log("get video callback :: it really is " + id)
         videoId = id
         id = videoId
         player.loadVideoById(videoId);
@@ -161,6 +166,33 @@ socket.on('changeVideoClient', function(data) {
     }, 1000);
 
 });
+
+// socket.on('changeVideoClient', function(data) {
+//     var videoId = data.videoId;
+//     console.log("video id is: " + videoId)
+
+//     socket.emit('get video', function(id) {
+//         console.log("it really is " + id)
+//         videoId = id
+//         id = videoId
+//         player.loadVideoById(videoId);
+        
+//     })
+
+//     setTimeout(function() {
+//         console.log("resyncing with host after video change")
+//         socket.emit('sync host', {});
+//     }, 1000);
+
+// });
+
+// socket.on("get video callback", function(id){
+//     console.log("get video callback :: it really is " + id)
+//     videoId = id
+//     id = videoId
+//     player.loadVideoById(videoId);
+    
+// })
 
 socket.on('changeTime', function(data) {
     var time = data.time
