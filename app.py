@@ -15,7 +15,6 @@ userrooms = {}
 roomToHost = {} # maps room to sid of the host
 connections = []
 
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -23,7 +22,7 @@ def index():
 @app.route('/<room>')
 def room(room):
     return render_template('index.html', room=room)
-
+  
 @socketio.on("new user")
 def handle_new_user(username):
     print(f"new user {username} is here")
@@ -47,6 +46,7 @@ def updateQueueVideos(roomnum):
         print("uqv if true")
         vidlist = room.get('queue', {})
         currPlayer = room.get('currPlayer', 0)
+        print("currPlayer:", currPlayer)
         # socketio.emit('get vidlist', {'vidlist': vidlist, 'currPlayer': currPlayer})
         socketio.emit('get vidlist', {'vidlist': vidlist, 'currPlayer': currPlayer}, room=room_name)
 
@@ -126,6 +126,9 @@ def handle_disconnect():
     
     if user_id in connections:
         connections.remove(user_id)
+        users.remove(username)
+    
+    connections.remove(user_id)
 
     room_num = userrooms.get(user_id)
     room_name = "room-" + str(room_num)
